@@ -1,6 +1,6 @@
 var passport        = require('passport'),
-    LocalStrategy   = require('passport-local').Strategy,
-    models
+LocalStrategy   = require('passport-local').Strategy,
+models
 
 var UserRoutes = function(appModels){
     models = appModels;
@@ -18,7 +18,7 @@ UserRoutes.prototype.register = function(req, res) {
     });
 }
 
-UserRoutes.prototype.createAccount = function(req, res) {
+UserRoutes.prototype.createUser = function(req, res) {
     var name = req.body.name;
     var email = req.body.email;
     var username = req.body.username;
@@ -71,6 +71,82 @@ UserRoutes.prototype.login = function(req, res) {
 
 UserRoutes.prototype.authenticate = function(req, res) {
     res.redirect('/');
+}
+
+UserRoutes.prototype.edit = function(req, res) {
+    // Set the page breadcrumb
+    req.breadcrumbs('Profile', '/users/edit');
+
+    models.user.getUserByUsername(req.user.username, function(err, user){
+        if(err) throw err;
+
+        res.render('users/edit.html', {
+            breadcrumbs: req.breadcrumbs(),
+            page: { title: user.username + '\'s profile'},
+            user: user,
+            path: 'edit'
+        });
+    });
+}
+
+UserRoutes.prototype.update = function(req, res) {
+    var name        = req.body.name;
+    var email       = req.body.email;
+    var username    = req.user.username;
+    var city        = req.body.city;
+    var state       = req.body.state;
+    var password    = req.body.password;
+    var password2   = req.body.password2;
+
+    // Validate incoming data based on request type
+    if(!password) {
+        req.checkBody('name', 'Name is required').notEmpty();
+        req.checkBody('email', 'Email is required').notEmpty();
+        req.checkBody('email', 'Email is not valid').isEmail();
+    } else {
+        req.checkBody('password', 'Password is required').notEmpty();
+        req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+    }
+
+    var errors = req.validationErrors();
+
+    // Create our updated user object
+    var userToBeUpdated = {};
+    if(name) {
+        userToBeUpdated.name = name;
+    }
+    if(username) {
+        userToBeUpdated.username = username;
+    }
+    if(email) {
+        userToBeUpdated.email = email;
+    }
+    if(city) {
+        userToBeUpdated.city = city;
+    }
+    if(state) {
+        userToBeUpdated.state = state;
+    }
+    if(password) {
+        userToBeUpdated.password = password;
+    }
+
+    // Check for validation errors & update user
+    if (!errors){
+        models.user.updateUser(userToBeUpdated, function(error, user) {
+            if(error) {
+                return res.status(500).json({status: 500, error: true, message: error });
+            }
+            // If successful, return a 200 to the browser
+            res.status(200).json({
+                status: 200,
+                error: false,
+                message: "Successfuly Update User Profile"
+            });
+        });
+    } else {
+        return res.status(400).json({ status: 400, error: true, message: errors.map(error => " " + error.msg ) });
+    }
 }
 
 UserRoutes.prototype.logout = function(req, res) {

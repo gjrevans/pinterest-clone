@@ -152,7 +152,8 @@ gulp.task('build-js', ['js', 'js-plugins']);
 gulp.task('js-plugins', [], function() {
     return gulp.src([
 			'node_modules/bootstrap/dist/js/bootstrap.min.js',
-            'src/lib/*.js'
+			'node_modules/bootstrap-growl/bootstrap-notify.min.js',
+            'src/lib/*.js',
         ])
         .pipe(concat('vendor.js'))
         .pipe(gulp.dest(paths.buildDir + 'js/'))

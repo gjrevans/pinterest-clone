@@ -1,0 +1,137 @@
+{% extends "layouts/default.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <!-- TABS -->
+            <ul class="nav nav-pills mb-3 justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#information" data-toggle="tab" role="tab">Information</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#password" data-toggle="tab" role="tab">Password</a>
+                </li>
+            </ul>
+            <!-- TAB CONTENT -->
+            <div class="tab-content">
+                <!-- INFORMATION -->
+                <div class="tab-pane active" id="information" role="tabpanel">
+                    <h3 class="text-primary">My Information</h3><hr>
+                    <form role="form" id="informationForm">
+                        <div class="form-group">
+                            <label for="">Name</label>
+                            <input type="text" name="name" value="{{ user.name }}" placeholder="Ex. John Doe" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Username</label>
+                            <input type="text" name="username" value="{{ user.username }}" placeholder="Ex. jon1doe" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Email</label>
+                            <input type="text" name="email" value="{{ user.email }}" placeholder="ex. john@email.com" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">City</label>
+                            <input type="text" name="city" value="{{ user.city }}" placeholder="ex. Toronto" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">State / Province</label>
+                            <input type="text" name="state" value="{{ user.state }}" placeholder="ex. Ontario" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" name="submit" class="form-control btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- PASSWORD -->
+                <div class="tab-pane" id="password" role="tabpanel">
+                    <h3 class="text-primary">Update Password</h3><hr>
+                    <form role="form" id="passwordForm">
+                        <div class="form-group">
+                            <label for="">New Password</label>
+                            <input type="password" name="password" value="" placeholder="password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Confrim Password</label>
+                            <input type="password" name="password2" value="" placeholder="confrim password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" name="submit" class="form-control btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+$('#informationForm').on('submit', function(e){
+    e.preventDefault();
+    var userData = {};
+    userData.name = $('input[name="name"]').val();
+    userData.email = $('input[name="email"]').val();
+    userData.city = $('input[name="city"]').val();
+    userData.state = $('input[name="state"]').val();
+
+    $.ajax({
+        method: 'POST',
+        url: '/users/update',
+        data: userData,
+        success: function() {
+            $.notify({
+                title: '<h5>Success</h5>',
+                message: 'Your profile was updated!'
+            },{
+                type: 'success',
+                delay: 5000
+            });
+        },
+        error: function(error) {
+            $.notify({
+                title: '<h5>Uh Oh...</h5>',
+                message: error.responseJSON.message
+            },{
+                type: 'danger',
+                delay: 5000
+            });
+        }
+    })
+});
+
+$('#passwordForm').on('submit', function(e){
+    e.preventDefault();
+    var passwordData = {};
+    passwordData.password = $('input[name="password"]').val();
+    passwordData.password2 = $('input[name="password2"]').val();
+
+    $.ajax({
+        method: 'POST',
+        url: '/users/update',
+        data: passwordData,
+        success: function() {
+            $.notify({
+                title: '<h5>Success</h5>',
+                message: 'Your password was updated!'
+            },{
+                type: 'success',
+                delay: 5000
+            });
+        },
+        error: function(error) {
+            $.notify({
+                title: '<h5>Uh Oh...</h5>',
+                message: error.responseJSON.message
+            },{
+                type: 'danger',
+                delay: 5000
+            });
+        }
+    })
+});
+</script>
+{% endblock %}

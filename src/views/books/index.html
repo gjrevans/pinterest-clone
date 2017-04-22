@@ -1,0 +1,29 @@
+{% extends "layouts/default.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				{% for book in books %}
+				<div class="col-md-3">
+					<div class="card">
+						<img class="card-img-top" src="{{ book.image }}" alt="{{ book.title }}" style="height: 100%;">
+						<div class="card-block">
+							<h4 class="card-title">{{ book.title }}</h4>
+							<p class="card-text">{{ book.summary }}</p>
+							<a href="#" class="btn btn-primary">Request Trade</a>
+						</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Use this to insert JS into a page -->
+<!-- Important to put JS here so that JQUERY is available to the page -->
+{% endblock %}

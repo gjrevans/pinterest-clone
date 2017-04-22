@@ -10,7 +10,8 @@ var UserModel = function(){
 var UserSchema = mongoose.Schema({
     username: {
         type: String,
-        index: true
+        index: true,
+        unique: true
     },
     password: {
         type: String
@@ -21,9 +22,12 @@ var UserSchema = mongoose.Schema({
     name: {
         type: String
     },
-    locations: [{
+    city: {
         type: String
-    }]
+    },
+    state: {
+        type: String
+    }
 });
 
 UserModel.prototype.createUser = function(newUser, callback){
@@ -33,6 +37,35 @@ UserModel.prototype.createUser = function(newUser, callback){
             newUser.save(callback);
         });
     });
+}
+
+UserModel.prototype.updateUser = function(userToBeUpdated, callback){
+    var query = { username: userToBeUpdated.username }
+    var updateData = {
+        $set: {}
+    };
+
+    if(userToBeUpdated.name) {
+        updateData.$set.name = userToBeUpdated.name
+    }
+    if(userToBeUpdated.city) {
+        updateData.$set.city = userToBeUpdated.city;
+    }
+    if(userToBeUpdated.state) {
+        updateData.$set.state = userToBeUpdated.state;
+    }
+
+    // If there is a password in the request, create a hash with bcrypt & update
+    if(userToBeUpdated.password) {
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(userToBeUpdated.password, salt, function(err, hash) {
+                updateData.$set.password = hash;
+                User.findOneAndUpdate(query, updateData, callback);
+            });
+        });
+    } else {
+        User.findOneAndUpdate(query, updateData, callback);
+    }
 }
 
 UserModel.prototype.getUserByUsername = function(username, callback){

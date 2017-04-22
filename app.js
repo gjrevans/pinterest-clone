@@ -52,7 +52,7 @@ app.use(breadcrumbs.setHome());
 
 // Mount the breadcrumbs at `/admin`
 app.use('/', breadcrumbs.setHome({
-  name: 'Home',
+  name: 'Books',
   url: '/'
 }));
 
@@ -131,13 +131,15 @@ routes = new Routes(models);
 
 /* -- User Routes -- */
 app.get('/users/register', alreadyAuthenticated, routes.users.register);
-app.post('/users/register', routes.users.createAccount);
+app.post('/users/register', routes.users.createUser);
 app.get('/users/login', alreadyAuthenticated, routes.users.login);
 app.post('/users/login', passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login', failureFlash: {type: 'errorMessages'}}), routes.users.authenticate);
+app.get('/users/update', ensureAuthented, routes.users.edit);
+app.post('/users/update', routes.users.update);
 app.get('/users/logout', routes.users.logout);
 
-/* -- Location Routes -- */
-app.get('/', routes.pages.index);
+/* -- Book Routes -- */
+app.get('/', routes.books.index);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
