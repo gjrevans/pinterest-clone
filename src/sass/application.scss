@@ -13,9 +13,15 @@
     }
 }
 
-// Breadcrump
+// breadcrumb
 .breadcrumb {
     border-radius: 0;
+}
+
+// Cards
+.card-columns .card,
+.card {
+    margin-bottom: 15px !important;
 }
 
 // Images

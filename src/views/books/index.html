@@ -3,29 +3,7 @@
 {% block content %}
 <div class="container-fluid mt-3">
 	<div class="row">
-		<div class="col-md-9">
-			<div class="card-columns">
-				{% for book in books %}
-					<div class="card">
-						<img class="card-img-top img-fluid p-3" src="{{ book.image }}" alt="Card image cap">
-						<div class="card-block">
-							<h4 class="card-title">{{ book.title }}</h4>
-							<p class="card-text">{{ book.summary }}</p>
-
-							<!-- Don't let a user trade with themselves -->
-							{% if book.user != user.id %}
-							<button type="button"
-									name="tradeButton"
-									class="btn btn-block btn-outline-success"
-									data-title="{{ book.title }}"
-									data-id="{{ book._id}}">Request Trade</button>
-							{% endif %}
-						</div>
-					</div>
-				{% endfor %}
-			</div>
-		</div>
-		<div class="col-md-3">
+		<div class="col-md-3 push-md-9">
 			<div class="card">
 				<div class="card-block">
 					<h4 class="card-title">{{ user.name }}</h4>
@@ -48,6 +26,28 @@
 				<div class="card-block">
 					<button type="button" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#newBookModal">Add A Book</button>
 				</div>
+			</div>
+		</div>
+		<div class="col-md-9 pull-md-3">
+			<div class="card-columns">
+				{% for book in books %}
+					<div class="card">
+						<img class="card-img-top img-fluid p-3" src="{{ book.image }}" alt="Card image cap">
+						<div class="card-block">
+							<h4 class="card-title">{{ book.title }}</h4>
+							<p class="card-text">{{ book.summary }}</p>
+
+							<!-- Don't let a user trade with themselves -->
+							{% if book.user != user.id %}
+							<button type="button"
+									name="tradeButton"
+									class="btn btn-block btn-outline-success"
+									data-title="{{ book.title }}"
+									data-id="{{ book._id}}">Request Trade</button>
+							{% endif %}
+						</div>
+					</div>
+				{% endfor %}
 			</div>
 		</div>
 	</div>

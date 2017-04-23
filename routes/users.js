@@ -75,7 +75,7 @@ UserRoutes.prototype.authenticate = function(req, res) {
 
 UserRoutes.prototype.edit = function(req, res) {
     // Set the page breadcrumb
-    req.breadcrumbs('Profile', '/users/edit');
+    req.breadcrumbs(req.user.username, '/users/update');
 
     models.user.getUserByUsername(req.user.username, function(err, user){
         if(err) throw err;

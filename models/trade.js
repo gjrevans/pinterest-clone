@@ -7,6 +7,10 @@ var TradeModel = function(){
 };
 
 var TradeSchema = mongoose.Schema({
+    status: {
+        type: String,
+        default: 'pending'
+    },
     bookOffered: {
         title: {
             type: String,
@@ -47,6 +51,31 @@ var TradeSchema = mongoose.Schema({
 
 TradeModel.prototype.createTrade = function(newTrade, callback) {
     newTrade.save(callback);
+}
+
+TradeModel.prototype.cancelTradeById = function(id, callback) {
+    if(!id || !validator.isMongoId(id)){
+        return callback("invalidId", false);
+    }
+
+    Trade.findOneAndRemove(id, callback);
+}
+
+TradeModel.prototype.updateTradeById = function(options, callback) {
+    var id = options.tradeId;
+
+    if(!id || !validator.isMongoId(id)){
+        return callback("invalidId", false);
+    }
+
+    var query = { _id: id };
+    var update = {
+        $set: {
+            status: options.tradeStatus
+        }
+    }
+
+    Trade.findOneAndUpdate(query, update, callback);
 }
 
 TradeModel.prototype.getIncomingTradesByUserId = function(id, callback) {

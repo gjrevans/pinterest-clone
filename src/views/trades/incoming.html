@@ -4,15 +4,34 @@
 <div class="container-fluid mt-3">
     <div class="row">
         {% for trade in trades %}
-        <div class="col-md-4">
+        <div class="col-lg-4 col-md-6">
             <div class="card">
-                <div class="card-block">
-                    <img src="{{ trade.bookOffered.image }}" alt="{{ trade.bookOffered.title }}" style="width:100px;display:inline-block;">
-                    <img src="{{ trade.bookInterested.image }}" alt="{{ trade.bookInterested.title }}" style="width:100px;display:inline-block;">
-                </div>
-                <div class="card-block">
-                    <p class="card-text">A user has offered to trade <strong>{{ trade.bookOffered.title }}</strong> for your book <strong>{{ trade.bookInterested.title }}</strong>.</p>
-                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item justify-content-between">
+                        <img src="{{ trade.bookOffered.image }}" alt="{{ trade.bookOffered.title }}" style="width:100px;">
+                        <i class="fa fa-arrows-h fa-2x fa-fw ml-3 mr-3"></i>
+                        <img src="{{ trade.bookInterested.image }}" alt="{{ trade.bookInterested.title }}" style="width:100px;">
+                    </li>
+                    <li class="list-group-item justify-content-between">
+                        <p class="card-text">
+                            A user has offered to trade <strong>{{ trade.bookOffered.title }}</strong> for your book <strong>{{ trade.bookInterested.title }}</strong>.
+                        </p>
+                    </li>
+                    {% if trade.status == 'pending' %}
+                    <li class="list-group-item justify-content-between">
+                        <button type="button" class="btn btn-outline-danger decline-trade" data-declineid="{{ trade._id }}">Decline</button>
+                        <button type="button" class="btn btn-outline-success accept-trade" data-acceptid="{{ trade._id }}">Accept</button>
+                    </li>
+                    {% elif trade.status == 'declined' %}
+                    <div class="card-block text-center">
+                        <span class="text-danger"><i class="fa fa-fw fa-times mr-2"></i>Declined</span>
+                    </div>
+                    {% elif trade.status == 'accepted' %}
+                    <div class="card-block text-center">
+                        <span class="text-success"><i class="fa fa-fw fa-check mr-2"></i>Accepted</span>
+                    </div>
+                    {% endif %}
+                </ul>
             </div>
         </div>
         {% endfor %}
@@ -22,6 +41,37 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Use this to insert JS into a page -->
-<!-- Important to put JS here so that JQUERY is available to the page -->
+<script type="text/javascript">
+$('.accept-trade').on('click', function(){
+    $.ajax({
+        method: "PATCH",
+        data: {
+            status: 'accepted'
+        },
+        url: '/trades/' + $(this).data('acceptid'),
+        success: function(response){
+            alert('success');
+        },
+        error: function(error) {
+            alert('fail');
+        }
+    })
+});
+
+$('.decline-trade').on('click', function(){
+    $.ajax({
+        method: "PATCH",
+        data: {
+            status: 'declined'
+        },
+        url: '/trades/' + $(this).data('declineid'),
+        success: function(response){
+            location.reload();
+        },
+        error: function(error) {
+            location.reload();
+        }
+    })
+});
+</script>
 {% endblock %}

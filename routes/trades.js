@@ -43,11 +43,45 @@ TradeRoutes.prototype.create = function(req, res) {
     }
 }
 
+TradeRoutes.prototype.cancelTrade = function(req, res) {
+    var tradeId = req.params.id;
+
+    models.trade.cancelTradeById(tradeId, function(err, canceledTrade){
+        if (err) throw err;
+        res.redirect('/trades/outgoing');
+    })
+}
+
+TradeRoutes.prototype.updateTrade = function(req, res) {
+    var options = {};
+    options.tradeStatus = req.body.status;
+    options.tradeId = req.params.id;
+
+    req.checkBody('tradeStatus', 'You must provide a trade status!');
+    req.checkBody('tradeId', 'You must provide a trade id!');
+
+    var errors = req.validationErrors();
+    if(!errors){
+        models.trade.updateTradeById(options, function(error, updatedTrade){
+            if (error) {
+                return res.status(500).json({ status: 500, error: true, message: error });
+            }
+            res.status(200).json({ status: 200, error: false, message: "Trade successfully updated" });
+        });
+
+    } else {
+        res.status(400).json({ status: 400, error: true, message: errors.map(error => " " + error.msg ) })
+    }
+}
+
 TradeRoutes.prototype.incomingTrades = function(req, res) {
     var userId = req.user.id;
 
     models.trade.getIncomingTradesByUserId(userId, function(error, foundTrades){
         if (error) throw error;
+
+        req.breadcrumbs(req.user.username, '/users/update');
+        req.breadcrumbs('Incoming Trades', '/trades/incoming');
 
         res.render('trades/incoming.html', {
             page: {title: 'Incoming Trades'},
@@ -62,6 +96,9 @@ TradeRoutes.prototype.outgoingTrades = function(req, res) {
 
     models.trade.getOutgoingTradesByUserId(userId, function(error, foundTrades){
         if (error) throw error;
+
+        req.breadcrumbs(req.user.username, '/users/update');
+        req.breadcrumbs('Outgoing Trades', '/trades/outgoing');
 
         res.render('trades/outgoing.html', {
             page: {title: 'Outgoing Trades'},

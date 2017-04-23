@@ -2,14 +2,30 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
-	<div class="row">
-		<div class="col-md-12">
-			<h3>Page Title</h3>
-            {% for trade in trades %}
-            You offered to trade {{ trade.bookOffered.title }} for {{ trade.bookInterested.title }}.
-            {% endfor %}
-		</div>
-	</div>
+    <div class="row">
+        {% for trade in trades %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item justify-content-between">
+                        <img src="{{ trade.bookOffered.image }}" alt="{{ trade.bookOffered.title }}" style="width:100px;">
+                        <i class="fa fa-arrows-h fa-2x fa-fw ml-3 mr-3"></i>
+                        <img src="{{ trade.bookInterested.image }}" alt="{{ trade.bookInterested.title }}" style="width:100px;">
+                    </li>
+                    <li class="list-group-item justify-content-between">
+                        <p class="card-text">
+							You offered to trade <strong>{{ trade.bookOffered.title }}</strong> for <strong>{{ trade.bookInterested.title }}</strong>.
+						</p>
+                    </li>
+                    <li class="list-group-item justify-content-between">
+                        <a href="/trades/delete/{{ trade._id }}" type="link" class="btn btn-block btn-outline-danger">Cancel Trade</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}
 
