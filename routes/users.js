@@ -180,6 +180,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
     models.user.getUserById(id, function(err, user) {
+        if(err) throw err;
         done(err, user);
     });
 });

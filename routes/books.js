@@ -5,16 +5,35 @@ var BookRoutes = function(appModels){
 };
 
 BookRoutes.prototype.index = function(req, res) {
+    var ownedBooks = [];
+
+    // Get all available books
     models.book.getBooks(function(err, books){
         if(err) throw err;
+        // If signed in, also fetch the current user's books
+        if(req.user) {
+            models.book.getBooksByUserId(req.user.id, function(err, ownedBooks){
+                if(err) throw err;
 
+                ownedBooks = ownedBooks;
+                render(books, ownedBooks);
+            });
+        // Otherwise, just render the view
+        } else {
+            render(books, ownedBooks);
+        }
+    });
+
+    // Render the view
+    function render(books, ownedBooks){
         res.render('books/index.html', {
             breadcrumbs: req.breadcrumbs(),
             page: { title: 'All Books' },
             path: 'books',
+            ownedBooks: ownedBooks,
             books: books
         });
-    });
+    }
 }
 
 BookRoutes.prototype.create = function(req, res) {

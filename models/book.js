@@ -1,5 +1,6 @@
-var mongoose = require('mongoose'),
-    Book;
+var validator   = require('validator');
+var mongoose    = require('mongoose');
+var Book;
 
 var BookModel = function(){
     Book = this.Book = mongoose.model('Book', BookSchema);
@@ -24,11 +25,18 @@ var BookSchema = mongoose.Schema({
     }
 });
 
-BookModel.prototype.getBooks = function(callback){
+BookModel.prototype.getBooks = function(callback) {
     Book.find(callback);
 }
 
-BookModel.prototype.createBook = function(bookToBeCreated, callback){
+BookModel.prototype.getBooksByUserId = function(id, callback) {
+    if(!id || !validator.isMongoId(id)){
+        return callback("invalidId", false);
+    }
+    Book.find({ user: id }, callback);
+}
+
+BookModel.prototype.createBook = function(bookToBeCreated, callback) {
     bookToBeCreated.save(bookToBeCreated, callback);
 }
 
