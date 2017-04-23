@@ -1,0 +1,27 @@
+{% extends "layouts/default.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="row">
+        {% for trade in trades %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-block">
+                    <img src="{{ trade.bookOffered.image }}" alt="{{ trade.bookOffered.title }}" style="width:100px;display:inline-block;">
+                    <img src="{{ trade.bookInterested.image }}" alt="{{ trade.bookInterested.title }}" style="width:100px;display:inline-block;">
+                </div>
+                <div class="card-block">
+                    <p class="card-text">A user has offered to trade <strong>{{ trade.bookOffered.title }}</strong> for your book <strong>{{ trade.bookInterested.title }}</strong>.</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Use this to insert JS into a page -->
+<!-- Important to put JS here so that JQUERY is available to the page -->
+{% endblock %}

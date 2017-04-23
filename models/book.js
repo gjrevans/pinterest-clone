@@ -36,6 +36,13 @@ BookModel.prototype.getBooksByUserId = function(id, callback) {
     Book.find({ user: id }, callback);
 }
 
+BookModel.prototype.getBookById = function(id, callback) {
+    if(!id || !validator.isMongoId(id)){
+        return callback("invalidId", false);
+    }
+    Book.findById(id, callback);
+}
+
 BookModel.prototype.createBook = function(bookToBeCreated, callback) {
     bookToBeCreated.save(bookToBeCreated, callback);
 }

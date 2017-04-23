@@ -1,0 +1,34 @@
+<!-- NEW BOOK MODAL -->
+<div class="modal fade" id="newTradeModal" tabindex="-1" role="dialog" aria-labelledby="newTradeModal" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="newTradeModalLabel">Request Trade</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form role="form" id="tradeForm">
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="title">Book Offered</label>
+						<select name="bookOffered" class="form-control">
+							{% for book in ownedBooks %}
+							<option value="{{ book._id }}">{{ book.title }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="summary">Book Requested</label>
+						<input type="text" name="bookInterestedTitle" value="" class="form-control" disabled>
+						<input type="text" name="bookInterestedId" value="" class="form-control" hidden>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="submit" name="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

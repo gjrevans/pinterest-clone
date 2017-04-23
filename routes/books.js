@@ -61,7 +61,6 @@ BookRoutes.prototype.create = function(req, res) {
             if(error) {
                 return res.status(500).json({status: 500, error: true, message: error });
             }
-            // If successful, return a 200 to the browser
             res.status(200).json({
                 status: 200,
                 error: false,
@@ -69,7 +68,7 @@ BookRoutes.prototype.create = function(req, res) {
             });
         });
     } else {
-        return res.status(400).json({ status: 400, error: true, message: errors.map(error => " " + error.msg ) });
+        res.status(400).json({ status: 400, error: true, message: errors.map(error => " " + error.msg ) });
     }
 }
 module.exports = BookRoutes;

@@ -142,6 +142,11 @@ app.get('/users/logout', routes.users.logout);
 app.get('/', routes.books.index);
 app.post('/books/create', ensureAuthented, routes.books.create);
 
+/* -- Trade Routes -- */
+app.get('/trades/incoming', ensureAuthented, routes.trades.incomingTrades);
+app.get('/trades/outgoing', ensureAuthented, routes.trades.outgoingTrades);
+app.post('/trades/create/:id', ensureAuthented, routes.trades.create);
+
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
