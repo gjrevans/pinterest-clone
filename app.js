@@ -140,6 +140,7 @@ app.get('/users/logout', routes.users.logout);
 
 /* -- Book Routes -- */
 app.get('/', routes.books.index);
+app.post('/books/create', ensureAuthented, routes.books.create);
 
 // Catch 404 and forward to error handler
 app.use(function(req, res, next) {

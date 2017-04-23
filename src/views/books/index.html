@@ -3,21 +3,74 @@
 {% block content %}
 <div class="container-fluid mt-3">
 	<div class="row">
-		<div class="col-md-12">
-			<div class="row">
+		<div class="col-md-9">
+			<div class="card-columns">
 				{% for book in books %}
-				<div class="col-md-3">
 					<div class="card">
-						<img class="card-img-top" src="{{ book.image }}" alt="{{ book.title }}" style="height: 100%;">
+						<img class="card-img-top img-fluid" src="{{ book.image }}" alt="Card image cap">
 						<div class="card-block">
 							<h4 class="card-title">{{ book.title }}</h4>
 							<p class="card-text">{{ book.summary }}</p>
-							<a href="#" class="btn btn-primary">Request Trade</a>
+							<button type="button" name="button" class="btn btn-primary" id="requestTrade" data-id="{{ book._id}}">Request Trade</button>
 						</div>
 					</div>
-				</div>
 				{% endfor %}
 			</div>
+		</div>
+		<div class="col-md-3">
+	<div class="card">
+		<div class="card-block">
+			<h4 class="card-title">{{ user.name }}</h4>
+			<p class="card-text">Welcome to the Book Trading Club. Here you'll find books you can make trade requests for using your own books.</p>
+		</div>
+		<ul class="list-group list-group-flush">
+			<li class="list-group-item justify-content-between">
+				Current Trades
+				<span class="badge badge-pill badge-primary">1</span>
+			</li>
+			<li class="list-group-item justify-content-between">
+				My Books
+				<span class="badge badge-pill badge-primary">3</span>
+			</li>
+		</ul>
+		<div class="card-block">
+			<button type="button" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#newBookModal">Add A Book</button>
+		</div>
+	</div>
+</div>
+	</div>
+</div>
+
+<!-- NEW BOOK MODAL -->
+<div class="modal fade" id="newBookModal" tabindex="-1" role="dialog" aria-labelledby="newBookModal" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="newBookModalLabel">Modal title</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form role="form" id="bookForm">
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="title">Title</label>
+						<input type="text" name="title" value="" placeholder="Ex. A Stary Night" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="summary">Summary</label>
+						<textarea type="textarea" name="summary" value="" rows="3" maxlength="200" placeholder="Ex. This book helps you learn about stary nights." class="form-control"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="image">Image</label>
+						<input type="text" name="image" value="" placeholder="ex. https://google.com/catphoto" class="form-control">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="submit" name="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>
@@ -26,4 +79,46 @@
 {% block extra_js %}
 <!-- Use this to insert JS into a page -->
 <!-- Important to put JS here so that JQUERY is available to the page -->
+<script type="text/javascript">
+$('#bookForm').on('submit', function(e){
+    e.preventDefault();
+    var bookData = {};
+    bookData.title = $('input[name="title"]').val();
+    bookData.summary = $('textarea[name="summary"]').val();
+	bookData.image = $('input[name="image"]').val();
+
+
+    $.ajax({
+        method: 'POST',
+        url: '/books/create',
+        data: bookData,
+        success: function() {
+			$('#newBookModal').modal('hide');
+            $.notify({
+                title: '<h5>Success</h5>',
+                message: 'Your book was successfuly added!'
+            },{
+                type: 'success',
+                delay: 5000
+            });
+        },
+        error: function(error) {
+			$('#newBookModal').modal('hide');
+			var errorMessage;
+			if(error.responseJSON.message){
+				errorMessage = error.responseJSON.message;
+			} else {
+				errorMessage = "Something went wrong, please try again!";
+			}
+            $.notify({
+                title: '<h5>Uh Oh...</h5>',
+                message: errorMessage
+            },{
+                type: 'danger',
+                delay: 5000
+            });
+        }
+    })
+});
+</script>
 {% endblock %}
