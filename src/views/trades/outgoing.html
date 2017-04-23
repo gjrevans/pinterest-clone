@@ -3,6 +3,13 @@
 {% block content %}
 <div class="container-fluid mt-3">
     <div class="row">
+        {% if trades.length == 0 %}
+        <div class="col-md-12 text-center">
+            <h4>No Outgoing Trades</h4>
+            <p>Looks like you don't have any outgoing trade requests at the moment!</p>
+            <a href="/" class="btn btn-primary">View All Books</a>
+        </div>
+        {% endif %}
         {% for trade in trades %}
         <div class="col-lg-4 col-md-6">
             <div class="card">
@@ -17,8 +24,17 @@
 							You offered to trade <strong>{{ trade.bookOffered.title }}</strong> for <strong>{{ trade.bookInterested.title }}</strong>.
 						</p>
                     </li>
-                    <li class="list-group-item justify-content-between">
-                        <a href="/trades/delete/{{ trade._id }}" type="link" class="btn btn-block btn-outline-danger">Cancel Trade</a>
+                    <div class="card-block text-center">
+                        {% if trade.status == 'pending' %}
+                        <span class="text-primary"><i class="fa fa-fw fa-hourglass-half mr-2"></i>Pending</span>
+                        {% elif trade.status == 'declined' %}
+                        <span class="text-danger"><i class="fa fa-fw fa-times mr-2"></i>Declined</span>
+                        {% elif trade.status == 'accepted' %}
+                        <span class="text-success"><i class="fa fa-fw fa-check mr-2"></i>Accepted</span>
+                        {% endif %}
+                    </div>
+                    <li class="list-group-item justify-content-center">
+                        <button type="button" class="btn btn-outline-danger cancel-trade" data-deleteid="{{ trade._id }}">Cancel Trade</button>
                     </li>
                 </ul>
             </div>
@@ -30,6 +46,19 @@
 {% endblock %}
 
 {% block extra_js %}
-<!-- Use this to insert JS into a page -->
-<!-- Important to put JS here so that JQUERY is available to the page -->
+<script type="text/javascript">
+$('.cancel-trade').on('click', function(){
+    $.ajax({
+        method: "DELETE",
+        data: {},
+        url: '/trades/' + $(this).data('deleteid'),
+        success: function(response){
+            location.reload();
+        },
+        error: function(error) {
+            location.reload();
+        }
+    })
+});
+</script>
 {% endblock %}

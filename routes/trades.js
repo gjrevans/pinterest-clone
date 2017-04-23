@@ -43,9 +43,42 @@ TradeRoutes.prototype.create = function(req, res) {
     }
 }
 
+TradeRoutes.prototype.getTradeCounts = function(req, res) {
+    var options = {}
+    var counts = {};
+
+    options.userId = req.params.userId;
+    options.count = true;
+
+    if(options && options.userId){
+        // First get the incoming count
+        models.trade.getIncomingTradesByUserId(options, function(err, incomingCount){
+            if(err) {
+                return res.status(500).json({status: 500, error: true, message: 'Couldn\'t get counts.'});
+            }
+            counts.incoming = incomingCount.length;
+
+            // Then get the outgoing count
+            models.trade.getOutgoingTradesByUserId(options, function(errr, outgoingCount){
+                if(errr) {
+                    return req.status(500).json({tatus: 500, error: true, message: 'Couldn\'t get counts.'});
+                }
+                counts.outgoing = outgoingCount.length;
+                res.status(200).json({
+                    status: 200,
+                    message: 'Your counts good sir!',
+                    data: counts
+                });
+            });
+        });
+    } else {
+        return res.status(400).json({status: 400, error: true, message: "Bad Request"});
+    }
+
+}
+
 TradeRoutes.prototype.cancelTrade = function(req, res) {
     var tradeId = req.params.id;
-
     models.trade.cancelTradeById(tradeId, function(err, canceledTrade){
         if (err) throw err;
         res.redirect('/trades/outgoing');
@@ -66,7 +99,7 @@ TradeRoutes.prototype.updateTrade = function(req, res) {
             if (error) {
                 return res.status(500).json({ status: 500, error: true, message: error });
             }
-            res.status(200).json({ status: 200, error: false, message: "Trade successfully updated" });
+            res.status(200).json({ status: 200, message: "Trade successfully updated" });
         });
 
     } else {
@@ -75,9 +108,11 @@ TradeRoutes.prototype.updateTrade = function(req, res) {
 }
 
 TradeRoutes.prototype.incomingTrades = function(req, res) {
-    var userId = req.user.id;
+    var options = {};
+    options.userId = req.user.id;
+    options.count = false;
 
-    models.trade.getIncomingTradesByUserId(userId, function(error, foundTrades){
+    models.trade.getIncomingTradesByUserId(options, function(error, foundTrades){
         if (error) throw error;
 
         req.breadcrumbs(req.user.username, '/users/update');
@@ -92,9 +127,11 @@ TradeRoutes.prototype.incomingTrades = function(req, res) {
 }
 
 TradeRoutes.prototype.outgoingTrades = function(req, res) {
-    var userId = req.user.id;
+    var options = {};
+    options.userId = req.user.id;
+    options.count = false;
 
-    models.trade.getOutgoingTradesByUserId(userId, function(error, foundTrades){
+    models.trade.getOutgoingTradesByUserId(options, function(error, foundTrades){
         if (error) throw error;
 
         req.breadcrumbs(req.user.username, '/users/update');

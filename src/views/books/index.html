@@ -11,16 +11,12 @@
 				</div>
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item justify-content-between">
-						<a href="/trades/outgoing">Outgoing Trades</a>
-						<span class="badge badge-pill badge-primary">1</span>
+						<a href="/trades/incoming">New Trade Requests</a>
+						<span class="badge badge-pill badge-danger" id="incomingTradeCount"></span>
 					</li>
 					<li class="list-group-item justify-content-between">
-						<a href="/trades/incoming">Incoming Trades</a>
-						<span class="badge badge-pill badge-primary">1</span>
-					</li>
-					<li class="list-group-item justify-content-between">
-						<a href="/books/{{ user.id }}">My Books</a>
-						<span class="badge badge-pill badge-primary">3</span>
+						<a href="/trades/outgoing">Pending Trades</a>
+						<span class="badge badge-pill badge-danger" id="outgoingTradeCount"></span>
 					</li>
 				</ul>
 				<div class="card-block">
@@ -62,6 +58,13 @@
 <!-- Use this to insert JS into a page -->
 <!-- Important to put JS here so that JQUERY is available to the page -->
 <script type="text/javascript">
+/* Get the user's counts */
+$.get( "/trades/counts/{{ user.id }}", function( response ) {
+  $('#incomingTradeCount').text(response.data.incoming);
+  $('#outgoingTradeCount').text(response.data.outgoing);
+});
+
+
 /* Show the trade modal and set the value */
 $('button[name="tradeButton"]').on('click', function(e){
 	e.preventDefault();

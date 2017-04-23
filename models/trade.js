@@ -78,20 +78,35 @@ TradeModel.prototype.updateTradeById = function(options, callback) {
     Trade.findOneAndUpdate(query, update, callback);
 }
 
-TradeModel.prototype.getIncomingTradesByUserId = function(id, callback) {
+TradeModel.prototype.getIncomingTradesByUserId = function(options, callback) {
+    var id = options.userId;
+
     if(!id || !validator.isMongoId(id)){
         return callback("invalidId", false);
     }
 
-    Trade.find({ 'bookInterested.user': id }, callback);
+    var query = { 'bookInterested.user': id };
+
+    if(options.count){
+        query.status = 'pending';
+    }
+
+    Trade.find(query, callback);
 }
 
-TradeModel.prototype.getOutgoingTradesByUserId = function(id, callback) {
+TradeModel.prototype.getOutgoingTradesByUserId = function(options, callback) {
+    var id = options.userId;
+
     if(!id || !validator.isMongoId(id)){
         return callback("invalidId", false);
     }
+    var query = { 'bookOffered.user': id };
 
-    Trade.find({ 'bookOffered.user': id }, callback);
+    if(options.count) {
+        query.status = 'pending';
+    }
+
+    Trade.find(query, callback);
 }
 
 module.exports = TradeModel;

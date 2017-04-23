@@ -3,6 +3,13 @@
 {% block content %}
 <div class="container-fluid mt-3">
     <div class="row">
+        {% if trades.length == 0 %}
+        <div class="col-md-12 text-center">
+            <h4>No Incoming Trades</h4>
+            <p>Looks like you don't have any outgoing trade requests at the moment!</p>
+            <a href="/" class="btn btn-primary">View All Books</a>
+        </div>
+        {% endif %}
         {% for trade in trades %}
         <div class="col-lg-4 col-md-6">
             <div class="card">
@@ -50,10 +57,10 @@ $('.accept-trade').on('click', function(){
         },
         url: '/trades/' + $(this).data('acceptid'),
         success: function(response){
-            alert('success');
+            location.reload();
         },
         error: function(error) {
-            alert('fail');
+            location.reload();
         }
     })
 });
