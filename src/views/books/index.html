@@ -58,10 +58,34 @@
 <!-- Use this to insert JS into a page -->
 <!-- Important to put JS here so that JQUERY is available to the page -->
 <script type="text/javascript">
+/* Initialize Socket io */
+var socket = io.connect();
+var incomingCount;
+var outgoingCount;
+
+socket.on('trade added', function(data) {
+	if (data.trade.bookInterested.user === '{{ user._id }}') {
+		// Notify the User of the new trade
+		$.notify({
+			title: '<h5>New Trade Request</h5>',
+			message: 'You just recieved a new trade request, check your trade request inbox!'
+		},{
+			type: 'success',
+			delay: 5000
+		});
+		// Increment the incomg trade request count
+		$('#incomingTradeCount').text(incomingCount + 1);
+	} else if (data.trade.bookOffered.user === '{{ user._id }}'){
+		// Increment the outgoing trade request count
+		$('#outgoingTradeCount').text(outgoingCount + 1);
+	}
+});
 /* Get the user's counts */
 $.get( "/trades/counts/{{ user.id }}", function( response ) {
-  $('#incomingTradeCount').text(response.data.incoming);
-  $('#outgoingTradeCount').text(response.data.outgoing);
+	incomingCount = response.data.incoming;
+	outgoingCount = response.data.outgoing;
+	$('#incomingTradeCount').text(incomingCount);
+ 	$('#outgoingTradeCount').text(outgoingCount);
 });
 
 

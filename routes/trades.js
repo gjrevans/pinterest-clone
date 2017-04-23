@@ -1,7 +1,9 @@
 var models;
+var io;
 
-var TradeRoutes = function(appModels){
+var TradeRoutes = function(appModels, appIo){
     models = appModels;
+    io = appIo;
 };
 
 TradeRoutes.prototype.create = function(req, res) {
@@ -30,6 +32,8 @@ TradeRoutes.prototype.create = function(req, res) {
                 // Create the new trade
                 models.trade.createTrade(tradeToBeCreated, function(error, trade){
                     if(error) { return res.status(500).json({ status: 500, error: true, message: error }); }
+
+                    io.sockets.emit('trade added', { trade: trade });
                     res.status(200).json({
                         status: 200,
                         error: false,
@@ -107,7 +111,7 @@ TradeRoutes.prototype.updateTrade = function(req, res) {
     }
 }
 
-TradeRoutes.prototype.incomingTrades = function(req, res) {
+TradeRoutes.prototype.getIncomingTrades = function(req, res) {
     var options = {};
     options.userId = req.user.id;
     options.count = false;
@@ -126,7 +130,7 @@ TradeRoutes.prototype.incomingTrades = function(req, res) {
     })
 }
 
-TradeRoutes.prototype.outgoingTrades = function(req, res) {
+TradeRoutes.prototype.getOutgoingTrades = function(req, res) {
     var options = {};
     options.userId = req.user.id;
     options.count = false;

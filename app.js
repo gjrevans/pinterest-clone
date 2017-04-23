@@ -19,6 +19,10 @@ var express         = require('express'),
     Models          = require("./models"),
     app             = express();
 
+// Socket IO Server
+var server  = require('http').Server(app);
+var io      = require('socket.io')(server);
+
 // Mongoose
 mongoose.connect(process.env.MONGO_URI);
 var db = mongoose.connection;
@@ -125,9 +129,24 @@ function alreadyAuthenticated(req, res, next){
         return next();
     }
 }
+
+/* -- Socket IO Routes -- */
+var connections = [];
+io.on('connection', function (socket) {
+    // Track New Connections
+    connections.push(socket);
+    console.log('Connected: %s active connections', connections.length);
+
+    // Track Disconnections
+    socket.on('disconnect', function (data){
+        connections.splice(connections.indexOf(data), 1);
+        console.log('Disconnected: %s active connections', connections.length);
+    });
+});
+
 // Initialize Routes
 models = new Models();
-routes = new Routes(models);
+routes = new Routes(models, io);
 
 /* -- User Routes -- */
 app.get('/users/register', alreadyAuthenticated, routes.users.register);
@@ -143,8 +162,8 @@ app.get('/', routes.books.index);
 app.post('/books/create', ensureAuthented, routes.books.create);
 
 /* -- Trade Routes -- */
-app.get('/trades/incoming', ensureAuthented, routes.trades.incomingTrades);
-app.get('/trades/outgoing', ensureAuthented, routes.trades.outgoingTrades);
+app.get('/trades/incoming', ensureAuthented, routes.trades.getIncomingTrades);
+app.get('/trades/outgoing', ensureAuthented, routes.trades.getOutgoingTrades);
 app.post('/trades/create/:id', ensureAuthented, routes.trades.create);
 app.delete('/trades/:id', ensureAuthented, routes.trades.cancelTrade);
 app.patch('/trades/:id', ensureAuthented, routes.trades.updateTrade);
@@ -169,7 +188,7 @@ app.use(function(err, req, res, next) {
 });
 
 // Start our application
-app.listen(port);
+server.listen(port);
 console.log('Server running on port ' + port);
 
 module.exports = app;
