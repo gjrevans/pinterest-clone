@@ -162,11 +162,12 @@ app.get('/', routes.books.index);
 app.post('/books/create', ensureAuthented, routes.books.create);
 
 /* -- Trade Routes -- */
-app.get('/trades/incoming', ensureAuthented, routes.trades.getIncomingTrades);
-app.get('/trades/outgoing', ensureAuthented, routes.trades.getOutgoingTrades);
+
 app.post('/trades/create/:id', ensureAuthented, routes.trades.create);
-app.delete('/trades/:id', ensureAuthented, routes.trades.cancelTrade);
 app.patch('/trades/:id', ensureAuthented, routes.trades.updateTrade);
+app.delete('/trades/:id', ensureAuthented, routes.trades.cancelTrade);
+app.get('/incoming_trades', ensureAuthented, routes.trades.getIncomingTrades);
+app.get('/outgoing_trades', ensureAuthented, routes.trades.getOutgoingTrades);
 app.get('/trades/counts/:userId', ensureAuthented, routes.trades.getTradeCounts);
 
 // Catch 404 and forward to error handler

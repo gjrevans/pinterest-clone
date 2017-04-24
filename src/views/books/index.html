@@ -11,11 +11,11 @@
 				</div>
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item justify-content-between">
-						<a href="/trades/incoming">New Trade Requests</a>
+						<a href="/incoming_trades">Trade Inbox</a>
 						<span class="badge badge-pill badge-danger" id="incomingTradeCount"></span>
 					</li>
 					<li class="list-group-item justify-content-between">
-						<a href="/trades/outgoing">Pending Trades</a>
+						<a href="/outgoing_trades">My Trades</a>
 						<span class="badge badge-pill badge-danger" id="outgoingTradeCount"></span>
 					</li>
 				</ul>
@@ -63,23 +63,31 @@ var socket = io.connect();
 var incomingCount;
 var outgoingCount;
 
+/* When a new trade is emitted, update the counts & alert the user */
 socket.on('trade added', function(data) {
-	if (data.trade.bookInterested.user === '{{ user._id }}') {
+	if (data.trade.interestedUser === '{{ user._id }}') {
 		// Notify the User of the new trade
 		$.notify({
 			title: '<h5>New Trade Request</h5>',
-			message: 'You just recieved a new trade request, check your trade request inbox!'
+			message: 	'A user would like to trade their book <strong>' +
+						data.trade.bookOffered.title +
+						'</strong> for your book <strong>' +
+						data.trade.bookInterested.title +
+						'</strong>! Check your trade inbox for more information.'
 		},{
 			type: 'success',
 			delay: 5000
 		});
 		// Increment the incomg trade request count
-		$('#incomingTradeCount').text(incomingCount + 1);
-	} else if (data.trade.bookOffered.user === '{{ user._id }}'){
+		incomingCount += 1;
+		$('#incomingTradeCount').text(incomingCount);
+	} else if (data.trade.offeringUser === '{{ user._id }}'){
 		// Increment the outgoing trade request count
-		$('#outgoingTradeCount').text(outgoingCount + 1);
+		outgoingCount += 1;
+		$('#outgoingTradeCount').text(outgoingCount);
 	}
 });
+
 /* Get the user's counts */
 $.get( "/trades/counts/{{ user.id }}", function( response ) {
 	incomingCount = response.data.incoming;

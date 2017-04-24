@@ -11,6 +11,14 @@ var TradeSchema = mongoose.Schema({
         type: String,
         default: 'pending'
     },
+    offeringUser: {
+        type: mongoose.Schema.ObjectId,
+        required: true
+    },
+    interestedUser : {
+        type: mongoose.Schema.ObjectId,
+        required: true
+    },
     bookOffered: {
         title: {
             type: String,
@@ -22,10 +30,6 @@ var TradeSchema = mongoose.Schema({
         },
         image: {
             type: String,
-            required: true
-        },
-        user: {
-            type: mongoose.Schema.ObjectId,
             required: true
         }
     },
@@ -40,10 +44,6 @@ var TradeSchema = mongoose.Schema({
         },
         image: {
             type: String,
-            required: true
-        },
-        user: {
-            type: mongoose.Schema.ObjectId,
             required: true
         }
     }
@@ -84,14 +84,24 @@ TradeModel.prototype.getIncomingTradesByUserId = function(options, callback) {
     if(!id || !validator.isMongoId(id)){
         return callback("invalidId", false);
     }
+    var query = { 'interestedUser': new mongoose.Types.ObjectId(id) };
 
-    var query = { 'bookInterested.user': id };
-
-    if(options.count){
+    if(options.count) {
         query.status = 'pending';
     }
 
-    Trade.find(query, callback);
+    Trade.aggregate([
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'offeringUser',
+                foreignField: '_id',
+                as: 'userInfo'
+            }
+        },{
+            $match: query
+        }
+    ], callback);
 }
 
 TradeModel.prototype.getOutgoingTradesByUserId = function(options, callback) {
@@ -100,13 +110,25 @@ TradeModel.prototype.getOutgoingTradesByUserId = function(options, callback) {
     if(!id || !validator.isMongoId(id)){
         return callback("invalidId", false);
     }
-    var query = { 'bookOffered.user': id };
+    var query = { 'offeringUser': new mongoose.Types.ObjectId(id) };
 
     if(options.count) {
         query.status = 'pending';
     }
 
-    Trade.find(query, callback);
+    Trade.aggregate([
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'interestedUser',
+                foreignField: '_id',
+                as: 'userInfo'
+            }
+        },{
+            $match: query
+        }
+    ], callback);
+
 }
 
 module.exports = TradeModel;

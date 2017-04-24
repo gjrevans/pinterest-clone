@@ -9,41 +9,53 @@
             <p>Looks like you don't have any outgoing trade requests at the moment!</p>
             <a href="/" class="btn btn-primary">View All Books</a>
         </div>
-        {% endif %}
+        {% else %}
+        <div class="col-lg-12 col-md-12">
+            <h5 class="text-primary">Incoming Trade Requests</h5><hr>
+        </div>
         {% for trade in trades %}
         <div class="col-lg-4 col-md-6">
             <div class="card">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item justify-content-between">
-                        <img src="{{ trade.bookOffered.image }}" alt="{{ trade.bookOffered.title }}" style="width:100px;">
+                        <img src="{{ trade.bookOffered.image }}" alt="{{ trade.bookOffered.title }}" class="trade-image">
                         <i class="fa fa-arrows-h fa-2x fa-fw ml-3 mr-3"></i>
-                        <img src="{{ trade.bookInterested.image }}" alt="{{ trade.bookInterested.title }}" style="width:100px;">
+                        <img src="{{ trade.bookInterested.image }}" alt="{{ trade.bookInterested.title }}" class="trade-image">
                     </li>
                     <li class="list-group-item justify-content-between">
                         <p class="card-text">
                             A user has offered to trade <strong>{{ trade.bookOffered.title }}</strong> for your book <strong>{{ trade.bookInterested.title }}</strong>.
                         </p>
                     </li>
+                    <div class="card-block text-center">
+                        {% if trade.status == 'pending' %}
+                        <span class="text-primary"><i class="fa fa-fw fa-hourglass-half mr-2"></i>Pending</span>
+                        {% elif trade.status == 'declined' %}
+                        <span class="text-danger"><i class="fa fa-fw fa-times mr-2"></i>You Declined!</span>
+                        {% elif trade.status == 'accepted' %}
+                        <span class="text-success"><i class="fa fa-fw fa-check mr-2"></i>You Accepted!</span>
+                        {% endif %}
+                    </div>
                     {% if trade.status == 'pending' %}
                     <li class="list-group-item justify-content-between">
                         <button type="button" class="btn btn-outline-danger decline-trade" data-declineid="{{ trade._id }}">Decline</button>
                         <button type="button" class="btn btn-outline-success accept-trade" data-acceptid="{{ trade._id }}">Accept</button>
                     </li>
-                    {% elif trade.status == 'declined' %}
-                    <div class="card-block text-center">
-                        <span class="text-danger"><i class="fa fa-fw fa-times mr-2"></i>Declined</span>
-                    </div>
-                    {% elif trade.status == 'accepted' %}
-                    <div class="card-block text-center">
-                        <span class="text-success"><i class="fa fa-fw fa-check mr-2"></i>Accepted</span>
-                    </div>
+                    {% else %}
+                    <li class="list-group-item justify-content-center">
+                        {% if trade.status == 'pending' or trade.status == 'declined'%}
+                        <button type="button" class="btn btn-outline-secondary disabled">No Actions Available</button>
+                        {% elif trade.status == 'accepted' %}
+                        <a href="mailto:{{ trade.userInfo[0].email }}?Subject=Lets%20Trade%20Books" target="_top" class="btn btn-outline-primary">Contract Trader</a>
+                        {% endif %}
+                    </li>
                     {% endif %}
                 </ul>
             </div>
         </div>
         {% endfor %}
+        {% endif %}
     </div>
-
 </div>
 {% endblock %}
 

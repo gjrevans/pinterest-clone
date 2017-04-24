@@ -25,10 +25,13 @@ TradeRoutes.prototype.create = function(req, res) {
         models.book.getBookById(bookOfferedId, function(err, foundBookOffered) {
             if(err) throw err;
             tradeToBeCreated.bookOffered = foundBookOffered;
+            tradeToBeCreated.offeringUser = foundBookOffered.user;
+
             // Find the book the user is interested in
             models.book.getBookById(bookInterestedId, function(errr, foundBookInterested){
                 if(errr) throw errr;
                 tradeToBeCreated.bookInterested = foundBookInterested;
+                tradeToBeCreated.interestedUser = foundBookInterested.user;
                 // Create the new trade
                 models.trade.createTrade(tradeToBeCreated, function(error, trade){
                     if(error) { return res.status(500).json({ status: 500, error: true, message: error }); }
@@ -43,7 +46,7 @@ TradeRoutes.prototype.create = function(req, res) {
             });
         });
     } else {
-        res.status(400).json({ status: 400, error: true, message: errors.map(error => " " + error.msg ) })
+        return res.status(400).json({ status: 400, error: true, message: errors.map(error => " " + error.msg ) })
     }
 }
 
@@ -70,7 +73,7 @@ TradeRoutes.prototype.getTradeCounts = function(req, res) {
                 counts.outgoing = outgoingCount.length;
                 res.status(200).json({
                     status: 200,
-                    message: 'Your counts good sir!',
+                    message: 'Message counts successfully fetched',
                     data: counts
                 });
             });
@@ -83,10 +86,17 @@ TradeRoutes.prototype.getTradeCounts = function(req, res) {
 
 TradeRoutes.prototype.cancelTrade = function(req, res) {
     var tradeId = req.params.id;
-    models.trade.cancelTradeById(tradeId, function(err, canceledTrade){
-        if (err) throw err;
-        res.redirect('/trades/outgoing');
-    })
+
+    if(tradeId){
+        models.trade.cancelTradeById(tradeId, function(error, canceledTrade){
+            if (error) {
+                return res.status(500).json({ status: 500, error: true, message: error });
+            }
+            res.status(200).json({ status: 200, message: "Trade successfully removed!" });
+        });
+    } else {
+        return res.status(400).json({ status: 400, error: true, message: 'Missing trade ID!' });
+    }
 }
 
 TradeRoutes.prototype.updateTrade = function(req, res) {
@@ -120,7 +130,7 @@ TradeRoutes.prototype.getIncomingTrades = function(req, res) {
         if (error) throw error;
 
         req.breadcrumbs(req.user.username, '/users/update');
-        req.breadcrumbs('Incoming Trades', '/trades/incoming');
+        req.breadcrumbs('Incoming Trades', '/incoming_trades');
 
         res.render('trades/incoming.html', {
             page: {title: 'Incoming Trades'},
@@ -139,8 +149,7 @@ TradeRoutes.prototype.getOutgoingTrades = function(req, res) {
         if (error) throw error;
 
         req.breadcrumbs(req.user.username, '/users/update');
-        req.breadcrumbs('Outgoing Trades', '/trades/outgoing');
-
+        req.breadcrumbs('Outgoing Trades', '/outgoing_trades');
         res.render('trades/outgoing.html', {
             page: {title: 'Outgoing Trades'},
             breadcrumbs: req.breadcrumbs(),
