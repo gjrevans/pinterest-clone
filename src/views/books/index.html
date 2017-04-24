@@ -9,6 +9,7 @@
 					{% if user %}
 					<h4 class="card-title">{{ user.name }}</h4>
 					<p class="card-text">Welcome to the Book Trading Club. Here you'll find books you can make trade requests for using your own books.</p>
+					<small><a href="/users/{{user.id}}/books">My Books</a></small>
 					{% else %}
 					<p class="card-text">Welcome to the Book Trading Club. <a href="/users/login">Login</a> or <a href="/users/register">create an account</a> now to start trading with other collectors!</p>
 					{% endif %}
@@ -45,7 +46,13 @@
 									name="tradeButton"
 									class="btn btn-block btn-outline-success"
 									data-title="{{ book.title }}"
-									data-id="{{ book._id}}">Request Trade</button>
+									data-id="{{ book.id}}">Request Trade</button>
+							{% elif book.user == user.id and user %}
+							<button type="button"
+									name="deleteButton"
+									class="btn btn-block btn-outline-danger"
+									data-title="{{ book.title }}"
+									data-id="{{ book.id}}">Delete Book</button>
 							{% endif %}
 						</div>
 					</div>
@@ -113,6 +120,36 @@ $('button[name="tradeButton"]').on('click', function(e){
 	$('#newTradeModal input[name="bookInterestedId"]').val(bookId);
 });
 
+$('button[name="deleteButton"]').on('click', function(e){
+	e.preventDefault();
+	var bookTitle = $(this).data('title');
+	var bookId = $(this).data('id');
+
+	$.ajax({
+		method: 'DELETE',
+		url: '/books/' + bookId,
+		data: {},
+		success: function(){
+			location.reload();
+		},
+		error: function(error){
+			var errorMessage;
+			if(error.responseJSON.message){
+				errorMessage = error.responseJSON.message;
+			} else {
+				errorMessage = "Something went wrong, please try again!";
+			}
+			$.notify({
+				title: '<h5>Uh Oh...</h5>',
+				message: errorMessage
+			},{
+				type: 'danger',
+				delay: 5000
+			});
+		}
+	});
+});
+
 /* Create a new Trade */
 $('#tradeForm').on('submit', function(e){
 	e.preventDefault();
@@ -172,11 +209,17 @@ $('#bookForm').on('submit', function(e){
 			$('#newBookModal').modal('hide');
             $.notify({
                 title: '<h5>Success</h5>',
-                message: 'Your book was successfuly added!'
+                message: 'Your book was successfuly added, the page will refresh.'
             },{
                 type: 'success',
-                delay: 5000
+				showProgressbar: true,
+                delay: 3000
             });
+
+			window.setTimeout(function(){
+				location.reload();
+			}, 3000);
+
         },
         error: function(error) {
 			$('#newBookModal').modal('hide');

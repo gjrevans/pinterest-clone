@@ -25,11 +25,13 @@ var BookSchema = mongoose.Schema({
     }
 });
 
-BookModel.prototype.getBooks = function(callback) {
+BookModel.prototype.getBooks = function(options, callback) {
     Book.find(callback);
 }
 
-BookModel.prototype.getBooksByUserId = function(id, callback) {
+BookModel.prototype.getBooksByUserId = function(options, callback) {
+    var id = options.userId;
+
     if(!id || !validator.isMongoId(id)){
         return callback("invalidId", false);
     }
@@ -45,6 +47,16 @@ BookModel.prototype.getBookById = function(id, callback) {
 
 BookModel.prototype.createBook = function(bookToBeCreated, callback) {
     bookToBeCreated.save(bookToBeCreated, callback);
+}
+
+BookModel.prototype.removeBookById = function(options, callback) {
+    var id = options.bookId;
+    
+    if(!id || !validator.isMongoId(id)){
+        return callback("invalidId", false);
+    }
+
+    Book.findOneAndRemove(options.id, callback);
 }
 
 module.exports = BookModel;

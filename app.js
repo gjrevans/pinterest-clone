@@ -155,10 +155,12 @@ app.get('/users/login', alreadyAuthenticated, routes.users.login);
 app.post('/users/login', passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login', failureFlash: {type: 'errorMessages'}}), routes.users.authenticate);
 app.get('/users/update', ensureAuthented, routes.users.edit);
 app.post('/users/update', routes.users.update);
+app.get('/users/:userId/books', routes.books.getBooksByUserId);
 app.get('/users/logout', routes.users.logout);
 
 /* -- Book Routes -- */
 app.get('/', routes.books.index);
+app.delete('/books/:id', routes.books.removeBookById);
 app.post('/books/create', ensureAuthented, routes.books.create);
 
 /* -- Trade Routes -- */

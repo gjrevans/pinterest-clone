@@ -85,10 +85,12 @@ TradeRoutes.prototype.getTradeCounts = function(req, res) {
 }
 
 TradeRoutes.prototype.cancelTrade = function(req, res) {
-    var tradeId = req.params.id;
+    var options = {
+        tradeId: req.params.id
+    }
 
-    if(tradeId){
-        models.trade.cancelTradeById(tradeId, function(error, canceledTrade){
+    if(options && options.tradeId){
+        models.trade.cancelTradeById(options, function(error, canceledTrade){
             if (error) {
                 return res.status(500).json({ status: 500, error: true, message: error });
             }

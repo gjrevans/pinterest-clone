@@ -53,7 +53,9 @@ TradeModel.prototype.createTrade = function(newTrade, callback) {
     newTrade.save(callback);
 }
 
-TradeModel.prototype.cancelTradeById = function(id, callback) {
+TradeModel.prototype.cancelTradeById = function(options, callback) {
+    var id = options.tradeId;
+
     if(!id || !validator.isMongoId(id)){
         return callback("invalidId", false);
     }
