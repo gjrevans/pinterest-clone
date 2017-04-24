@@ -8,6 +8,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
+			{% if ownedBooks.length > 0 %}
 			<form role="form" id="tradeForm">
 				<div class="modal-body">
 					<div class="form-group">
@@ -29,6 +30,15 @@
 					<button type="submit" name="submit" class="btn btn-primary">Submit</button>
 				</div>
 			</form>
+			{% else %}
+			<div class="modal-body">
+				<p>Looks like you haven't uploaded any books yet. To be able to make a trade on the Book Trading Club you must add at least one book to your account.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="addABookFromModal">Add a Book</button>
+			</div>
+			{% endif %}
 		</div>
 	</div>
 </div>

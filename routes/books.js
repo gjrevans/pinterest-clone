@@ -23,7 +23,7 @@ BookRoutes.prototype.index = function(req, res) {
             render(books, ownedBooks);
         }
     });
-
+    console.log(req.user);
     // Render the view
     function render(books, ownedBooks){
         res.render('books/index.html', {

@@ -6,8 +6,12 @@
 		<div class="col-md-3 push-md-9">
 			<div class="card">
 				<div class="card-block">
+					{% if user %}
 					<h4 class="card-title">{{ user.name }}</h4>
 					<p class="card-text">Welcome to the Book Trading Club. Here you'll find books you can make trade requests for using your own books.</p>
+					{% else %}
+					<p class="card-text">Welcome to the Book Trading Club. <a href="/users/login">Login</a> or <a href="/users/register">create an account</a> now to start trading with other collectors!</p>
+					{% endif %}
 				</div>
 				<ul class="list-group list-group-flush">
 					<li class="list-group-item justify-content-between">
@@ -19,9 +23,11 @@
 						<span class="badge badge-pill badge-danger" id="outgoingTradeCount"></span>
 					</li>
 				</ul>
+				{% if user %}
 				<div class="card-block">
 					<button type="button" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#newBookModal">Add A Book</button>
 				</div>
+				{% endif %}
 			</div>
 		</div>
 		<div class="col-md-9 pull-md-3">
@@ -34,7 +40,7 @@
 							<p class="card-text">{{ book.summary }}</p>
 
 							<!-- Don't let a user trade with themselves -->
-							{% if book.user != user.id %}
+							{% if book.user != user.id and user %}
 							<button type="button"
 									name="tradeButton"
 									class="btn btn-block btn-outline-success"
@@ -190,5 +196,11 @@ $('#bookForm').on('submit', function(e){
         }
     })
 });
+
+/* Dismiss Trade Modal and summon Book Modal */
+$('#addABookFromModal').on('click', function(){
+	$('#newTradeModal').modal('hide');
+	$('#newBookModal').modal('show');
+})
 </script>
 {% endblock %}
