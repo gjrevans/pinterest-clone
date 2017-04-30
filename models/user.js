@@ -28,6 +28,20 @@ var UserSchema = mongoose.Schema({
     state: {
         type: String
     },
+    twitter: {
+        id: {
+            type: String
+        },
+        token: {
+            type: String
+        },
+        username: {
+            type: String
+        },
+        displayName: {
+            type: String
+        }
+    },
     created_at: {
         type: Date,
         required: true,
@@ -45,13 +59,19 @@ UserModel.prototype.createUser = function(newUser, callback){
 }
 
 UserModel.prototype.updateUser = function(userToBeUpdated, callback){
-    var query = { username: userToBeUpdated.username }
+    var query = { _id: userToBeUpdated.id }
     var updateData = {
         $set: {}
     };
 
     if(userToBeUpdated.name) {
-        updateData.$set.name = userToBeUpdated.name
+        updateData.$set.name = userToBeUpdated.name;
+    }
+    if(userToBeUpdated.email) {
+        updateData.$set.email = userToBeUpdated.email;
+    }
+    if(userToBeUpdated.username) {
+        updateData.$set.username = userToBeUpdated.username;
     }
     if(userToBeUpdated.city) {
         updateData.$set.city = userToBeUpdated.city;
@@ -77,6 +97,12 @@ UserModel.prototype.getUserByUsername = function(username, callback){
     var query = { username: username }
     User.findOne(query, callback);
 }
+UserModel.prototype.findUserByTwitterId = function(twitterId, callback){
+    var query = { 'twitter.id' : twitterId };
+    User.findOne(query, callback);
+}
+
+
 
 UserModel.prototype.getUserById = function(options, callback){
     var id = options.userId;

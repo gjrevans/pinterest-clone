@@ -1,5 +1,6 @@
 var passport        = require('passport'),
-LocalStrategy   = require('passport-local').Strategy,
+LocalStrategy       = require('passport-local').Strategy,
+TwitterStrategy     = require('passport-twitter').Strategy,
 models
 
 var UserRoutes = function(appModels){
@@ -79,13 +80,29 @@ UserRoutes.prototype.profileView = function(req, res) {
 
     models.user.getUserById(options, function(err, user){
         if(err) throw err;
-
         req.breadcrumbs(user.name);
+
+        res.render('users/edit.html', {
+            breadcrumbs: req.breadcrumbs(),
+            page: { title: user.username + '\'s profile'},
+            currentUser: user,
+            path: 'edit'
+        });
+    });
+}
+UserRoutes.prototype.updateView = function(req, res) {
+    var options = {};
+    options.userId = req.params.userId;
+
+    models.user.getUserById(options, function(err, user){
+        if(err) throw err;
+        req.breadcrumbs(user.name, '/users/' + user._id);
+        req.breadcrumbs('Pins');
 
         models.pin.getPinsForUser(options, function(error, pins) {
             if(error) throw error;
 
-            res.render('users/edit.html', {
+            res.render('users/pins.html', {
                 breadcrumbs: req.breadcrumbs(),
                 page: { title: user.username + '\'s profile'},
                 currentUser: user,
@@ -97,9 +114,10 @@ UserRoutes.prototype.profileView = function(req, res) {
 }
 
 UserRoutes.prototype.update = function(req, res) {
+    var id          = req.user._id;
     var name        = req.body.name;
     var email       = req.body.email;
-    var username    = req.user.username;
+    var username    = req.body.username;
     var city        = req.body.city;
     var state       = req.body.state;
     var password    = req.body.password;
@@ -119,6 +137,9 @@ UserRoutes.prototype.update = function(req, res) {
 
     // Create our updated user object
     var userToBeUpdated = {};
+    if(id) {
+        userToBeUpdated.id = id;
+    }
     if(name) {
         userToBeUpdated.name = name;
     }
@@ -176,6 +197,45 @@ passport.use(new LocalStrategy(function(username, password, done) {
                 return done(null, user);
             } else {
                 return done(null, false, {message: 'Invalid password'});
+            }
+        });
+    });
+}));
+
+passport.use(new TwitterStrategy({
+    consumerKey     : process.env.TWITTER_ID,
+    consumerSecret  : process.env.TWITTER_SECRET,
+    callbackURL     : process.env.TWITTER_CB_URL
+},
+function(token, tokenSecret, profile, done) {
+    // make the code asynchronous
+    // User.findOne won't fire until we have all our data back from Twitter
+    process.nextTick(function() {
+        models.user.findUserByTwitterId(profile.id, function(err, user){
+            // if there is an error, stop everything and return that
+            // ie an error connecting to the database
+            if (err) throw err;
+
+            // If the user already exists, then we finish the process
+            if (user) {
+                return done(null, user);
+
+            // If no user exists, we create a new user
+            } else {
+                var newUser = new models.user.User();
+
+                // Set all of the user data that we need
+                newUser.twitter.id          = profile.id;
+                newUser.twitter.token       = token;
+                newUser.twitter.username    = profile.username;
+                newUser.twitter.displayName = profile.displayName;
+                newUser.name                = profile.displayName;
+
+                // Create the new user
+                models.user.createUser(newUser, function(err, user){
+                    if(err) throw err;
+                    return done(null, newUser);
+                });
             }
         });
     });

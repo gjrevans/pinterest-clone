@@ -1,0 +1,32 @@
+{% extends "layouts/default.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            {% if pins.length > 0 %}
+			<div class="card-columns">
+				{% for pin in pins %}
+					{% include 'pins/pin.html'%}
+				{% endfor %}
+			</div>
+			{% else %}
+			<div class="row">
+				<div class="col-md-4 offset-md-4">
+					<div class="card text-center">
+						<div class="card-block">
+							<h4 class="card-title">No Pins Found</h4>
+							<p>This user hasn't uploaded any pins yet.</p>
+							<a href="/" class="btn btn-primary">View All Pins</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

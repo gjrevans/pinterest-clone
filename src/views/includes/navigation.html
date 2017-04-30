@@ -8,13 +8,13 @@
         <ul class="navbar-nav ml-auto">
             {% if user %}
             <li class="nav-item">
-                <a class="nav-link" href="/users/{{ user._id }}"><i class="fa fa-user-circle-o mr-1"></i></a>
+                <a class="nav-link" href="/users/{{ user._id }}/pins"><i class="fa fa-user-circle-o mr-1"></i></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/users/{{ user._id }}"><i class="fa fa-cog mr-1"></i></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/users/logout"><i class="fa fa-sign-out mr-1"></i></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#newPinModal"><i class="fa fa-plus-square"></i></a>
             </li>
             {% else %}
             <li class="nav-item {% if path === 'login' %}active{% endif %}">

@@ -9,7 +9,7 @@
                 data-id="{{ pin.id}}"><i class="fa fa-fw fa-trash-o"></i></button>
         {% endif %}
         <h4 class="card-title">{{ pin.title }}</h4>
-        <p class="card-text small"><a href="/users/{{ pin.user._id }}" >{{ pin.user.username }}</a></p>
+        <p class="card-text small"><a href="/users/{{ pin.user._id }}/pins" >{{ pin.user.username }}</a></p>
     </div>
 
 </div>

@@ -8,8 +8,6 @@ var express         = require('express'),
     mongoose        = require('mongodb'),
     mongoose        = require('mongoose'),
     passport        = require('passport'),
-    LocalStrategy   = require('passport-local').Strategy,
-    TwitterStrategy  = require('passport-twitter').Strategy,
     nunjucks        = require('nunjucks'),
     path            = require('path'),
     logger          = require('morgan'),
@@ -136,8 +134,11 @@ app.get('/users/register', alreadyAuthenticated, routes.users.registerView);
 app.post('/users/register', routes.users.register);
 app.get('/users/login', alreadyAuthenticated, routes.users.loginView);
 app.post('/users/login', passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login', failureFlash: {type: 'errorMessages'}}), routes.users.login);
+app.get('/users/twitter', passport.authenticate('twitter'));
+app.get('/users/twitter/callback', passport.authenticate('twitter', {successRedirect : '/', failureRedirect : '/users/login', failureFlash: {type: 'errorMessages'}}));
 app.get('/users/logout', routes.users.logout);
 app.get('/users/:userId', routes.users.profileView);
+app.get('/users/:userId/pins', routes.users.updateView);
 app.post('/users/:userId', routes.users.update);
 
 /* -- Pin Routes -- */
