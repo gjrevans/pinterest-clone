@@ -27,6 +27,11 @@ var UserSchema = mongoose.Schema({
     },
     state: {
         type: String
+    },
+    created_at: {
+        type: Date,
+        required: true,
+        default: Date.now
     }
 });
 
@@ -73,9 +78,11 @@ UserModel.prototype.getUserByUsername = function(username, callback){
     User.findOne(query, callback);
 }
 
-UserModel.prototype.getUserById = function(id, callback){
+UserModel.prototype.getUserById = function(options, callback){
+    var id = options.userId;
     // Make sure we're passing a mongo id
     if(!id || !validator.isMongoId(id)){
+        console.log('getUserById');
         return callback("invalidId", false);
     }
     User.findById(id, callback);

@@ -6,7 +6,7 @@ var UserRoutes = function(appModels){
     models = appModels;
 };
 
-UserRoutes.prototype.register = function(req, res) {
+UserRoutes.prototype.registerView = function(req, res) {
     // Set the page breadcrumb
     req.breadcrumbs('Register', '/users/register');
 
@@ -18,7 +18,7 @@ UserRoutes.prototype.register = function(req, res) {
     });
 }
 
-UserRoutes.prototype.createUser = function(req, res) {
+UserRoutes.prototype.register = function(req, res) {
     var name = req.body.name;
     var email = req.body.email;
     var username = req.body.username;
@@ -57,7 +57,7 @@ UserRoutes.prototype.createUser = function(req, res) {
     }
 }
 
-UserRoutes.prototype.login = function(req, res) {
+UserRoutes.prototype.loginView = function(req, res) {
     // Set the page breadcrumb
     req.breadcrumbs('Login', '/users/login');
 
@@ -69,22 +69,29 @@ UserRoutes.prototype.login = function(req, res) {
     });
 }
 
-UserRoutes.prototype.authenticate = function(req, res) {
+UserRoutes.prototype.login = function(req, res) {
     res.redirect('/');
 }
 
-UserRoutes.prototype.edit = function(req, res) {
-    // Set the page breadcrumb
-    req.breadcrumbs(req.user.username, '/users/update');
+UserRoutes.prototype.profileView = function(req, res) {
+    var options = {};
+    options.userId = req.params.userId;
 
-    models.user.getUserByUsername(req.user.username, function(err, user){
+    models.user.getUserById(options, function(err, user){
         if(err) throw err;
 
-        res.render('users/edit.html', {
-            breadcrumbs: req.breadcrumbs(),
-            page: { title: user.username + '\'s profile'},
-            user: user,
-            path: 'edit'
+        req.breadcrumbs(user.name);
+
+        models.pin.getPinsForUser(options, function(error, pins) {
+            if(error) throw error;
+
+            res.render('users/edit.html', {
+                breadcrumbs: req.breadcrumbs(),
+                page: { title: user.username + '\'s profile'},
+                currentUser: user,
+                pins: pins,
+                path: 'edit'
+            });
         });
     });
 }
@@ -179,7 +186,9 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-    models.user.getUserById(id, function(err, user) {
+    var options = { userId: id };
+
+    models.user.getUserById(options, function(err, user) {
         if(err) throw err;
         done(err, user);
     });

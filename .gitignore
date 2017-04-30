@@ -2,6 +2,6 @@ build
 dist
 temp
 node_modules
-.env
 data
+.env
 npm-debug.log

@@ -106,16 +106,16 @@ $purple: #613d7c !default;
 // Create grayscale
 $gray-dark:                 #292b2c !default;
 $gray:                      #464a4c !default;
-$gray-light:                #636c72 !default;
+$gray-light:                #555555 !default;
 $gray-lighter:              #eceeef !default;
 $gray-lightest:             #f7f7f9 !default;
 
 // Reassign color vars to semantic color scheme
-$color1: #7d53de;
-$color2: #8bc34a;
-$color3: #03a9f4;
-$color4: #ff9800;
-$color5: #e91e63;
+$color1: #bd081c;
+$color2: #a7b299;
+$color3: #88a5ab;
+$color4: #8a6d3b;
+$color5: #8c0615;
 
 $brand-primary:             $color1 !default;
 $brand-success:             $color2 !default;
@@ -187,7 +187,7 @@ $sizes: (
 // Settings for the `<body>` element.
 
 $body-bg:       $white !default;
-$body-color:    $gray-dark !default;
+$body-color:    $gray-light !default;
 $inverse-bg:    $gray-dark !default;
 $inverse-color: $gray-lighter !default;
 
@@ -727,11 +727,11 @@ $card-bg:                  $white !default;
 
 $card-link-hover-color:    $white !default;
 
-$card-img-overlay-padding: 1.25rem !default;
+$card-img-overlay-padding: 1rem !default;
 
 $card-deck-margin:          ($grid-gutter-width-base / 2) !default;
 
-$card-columns-count:        3 !default;
+$card-columns-count:        4 !default;
 $card-columns-gap:          1.25rem !default;
 $card-columns-margin:       $card-spacer-y !default;
 

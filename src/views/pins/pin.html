@@ -1,0 +1,15 @@
+<div class="card card-inverse">
+    <img class="card-img-top img-fluid" src="{{ pin.image }}" alt="{{ pin.title }}">
+    <div class="card-img-overlay">
+        {% if pin.user.id == user._id and user %}
+        <button type="button"
+                name="deleteButton"
+                class="btn btn-sm btn-warning btn-delete"
+                data-title="{{ pin.title }}"
+                data-id="{{ pin.id}}"><i class="fa fa-fw fa-trash-o"></i></button>
+        {% endif %}
+        <h4 class="card-title">{{ pin.title }}</h4>
+        <p class="card-text small"><a href="/users/{{ pin.user._id }}" >{{ pin.user.username }}</a></p>
+    </div>
+
+</div>

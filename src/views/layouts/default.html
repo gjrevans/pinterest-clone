@@ -20,7 +20,9 @@
         {% include "../includes/errors.html" %}
 
         <!-- BREADCRUMB -->
+        {% if path != 'pins' %}
         {% include "../includes/breadcrumb.html" %}
+        {% endif %}
 
         <!-- PAGE CONTENT -->
         {% block content %}{% endblock %}
@@ -28,9 +30,6 @@
         <!-- PAGE FOOTER -->
         {% include "../includes/footer.html" %}
         <!-- htmlmin:ignore -->
-
-        <!-- Socket IO -->
-        <script src="/socket.io/socket.io.js"></script>
 
         <!-- BOOTSTRAP -->
         <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

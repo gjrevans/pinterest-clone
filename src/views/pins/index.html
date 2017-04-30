@@ -1,0 +1,121 @@
+{% extends "layouts/default.html" %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+	<div class="row">
+		<div class="col-md-12 col-sm-12">
+			{% if pins.length > 0 %}
+			<div class="card-columns">
+				{% for pin in pins %}
+					{% include 'pins/pin.html'%}
+				{% endfor %}
+			</div>
+			{% else %}
+			<div class="row">
+				<div class="col-md-4 offset-md-4">
+					<div class="card text-center">
+						<div class="card-block">
+							<h4 class="card-title">No Pins Found</h4>
+							<p>Let's post the first pin and get some pinteresting content!</p>
+							{% if user %}
+							<button type="button" class="btn btn-block btn-primary mt-1" data-toggle="modal" data-target="#newPinModal">Pin-It</button>
+							{% else %}
+							<a href="/users/register" class="btn btn-primary">Sign Up</a>
+							<a href="/users/login" class="btn btn-outline-primary">Login</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</div>
+
+{% include "./newpin.html" %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+$(document).ready(function(){
+	$('button[name="deleteButton"]').on('click', function(e){
+		e.preventDefault();
+		var pinTitle = $(this).data('title');
+		var pinId = $(this).data('id');
+
+		$.ajax({
+			method: 'DELETE',
+			url: '/pins/' + pinId,
+			data: {},
+			success: function(){
+				location.reload();
+			},
+			error: function(error){
+				var errorMessage;
+				if(error.responseJSON.message){
+					errorMessage = error.responseJSON.message;
+				} else {
+					errorMessage = "Something went wrong, please try again!";
+				}
+				$.notify({
+					title: '<h5>Uh Oh...</h5>',
+					message: errorMessage
+				},{
+					type: 'danger',
+					delay: 5000
+				});
+			}
+		});
+	});
+
+	/* Create a new pin */
+	$('#pinForm').on('submit', function(e){
+	    e.preventDefault();
+	    var pinData = {};
+	    pinData.title = $('input[name="title"]').val();
+	    pinData.summary = $('textarea[name="summary"]').val();
+		pinData.image = $('input[name="image"]').val();
+
+
+	    $.ajax({
+	        method: 'POST',
+	        url: '/pins/create',
+	        data: pinData,
+	        success: function() {
+				$('#newPinModal').modal('hide');
+	            $.notify({
+	                title: '<h5>Success</h5>',
+	                message: 'Your pin was successfuly added, the page will refresh.'
+	            },{
+	                type: 'success',
+					showProgressbar: true,
+	                delay: 3000
+	            });
+
+				window.setTimeout(function(){
+					location.reload();
+				}, 3000);
+
+	        },
+	        error: function(error) {
+				$('#newPinModal').modal('hide');
+				var errorMessage;
+				if(error.responseJSON.message){
+					errorMessage = error.responseJSON.message;
+				} else {
+					errorMessage = "Something went wrong, please try again!";
+				}
+	            $.notify({
+	                title: '<h5>Uh Oh...</h5>',
+	                message: errorMessage
+	            },{
+	                type: 'danger',
+	                delay: 5000
+	            });
+	        }
+	    })
+	});
+});
+</script>
+{% endblock %}

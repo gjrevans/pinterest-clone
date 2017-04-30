@@ -3,66 +3,102 @@
 {% block content %}
 <div class="container-fluid mt-3">
     <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <!-- TABS -->
-            <ul class="nav nav-pills mb-3 justify-content-center">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#information" data-toggle="tab" role="tab">Information</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#password" data-toggle="tab" role="tab">Password</a>
-                </li>
-            </ul>
-            <!-- TAB CONTENT -->
-            <div class="tab-content">
-                <!-- INFORMATION -->
-                <div class="tab-pane active" id="information" role="tabpanel">
-                    <h3 class="text-primary">My Information</h3><hr>
-                    <form role="form" id="informationForm">
-                        <div class="form-group">
-                            <label for="">Name</label>
-                            <input type="text" name="name" value="{{ user.name }}" placeholder="Ex. John Doe" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="">Username</label>
-                            <input type="text" name="username" value="{{ user.username }}" placeholder="Ex. jon1doe" class="form-control" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="">Email</label>
-                            <input type="text" name="email" value="{{ user.email }}" placeholder="ex. john@email.com" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="">City</label>
-                            <input type="text" name="city" value="{{ user.city }}" placeholder="ex. Toronto" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="">State / Province</label>
-                            <input type="text" name="state" value="{{ user.state }}" placeholder="ex. Ontario" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" name="submit" class="form-control btn btn-primary">Update</button>
-                        </div>
-                    </form>
+        <div class="col-md-4 push-md-8">
+            {% if user %}
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-pills card-header-pills">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#information" data-toggle="tab" role="tab">Information</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#password" data-toggle="tab" role="tab">Password</a>
+                        </li>
+                    </ul>
                 </div>
-                <!-- PASSWORD -->
-                <div class="tab-pane" id="password" role="tabpanel">
-                    <h3 class="text-primary">Update Password</h3><hr>
-                    <form role="form" id="passwordForm">
-                        <div class="form-group">
-                            <label for="">New Password</label>
-                            <input type="password" name="password" value="" placeholder="password" class="form-control">
+                <div class="card-block">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="information" role="tabpanel">
+                            <h3 class="text-primary">My Information</h3><hr>
+                            <form role="form" id="informationForm">
+                                <div class="form-group">
+                                    <label for="">Name</label>
+                                    <input type="text" name="name" value="{{ user.name }}" placeholder="Ex. John Doe" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Username</label>
+                                    <input type="text" name="username" value="{{ user.username }}" placeholder="Ex. jon1doe" class="form-control" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Email</label>
+                                    <input type="text" name="email" value="{{ user.email }}" placeholder="ex. john@email.com" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">City</label>
+                                    <input type="text" name="city" value="{{ user.city }}" placeholder="ex. Toronto" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">State / Province</label>
+                                    <input type="text" name="state" value="{{ user.state }}" placeholder="ex. Ontario" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" name="submit" class="form-control btn btn-primary">Update</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <label for="">Confrim Password</label>
-                            <input type="password" name="password2" value="" placeholder="confrim password" class="form-control">
+                        <div class="tab-pane" id="password" role="tabpanel">
+                            <h3 class="text-primary">Update Password</h3><hr>
+                            <form role="form" id="passwordForm">
+                                <div class="form-group">
+                                    <label for="">New Password</label>
+                                    <input type="password" name="password" value="" placeholder="password" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="">Confrim Password</label>
+                                    <input type="password" name="password2" value="" placeholder="confrim password" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" name="submit" class="form-control btn btn-primary">Update</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group">
-                            <button type="submit" name="submit" class="form-control btn btn-primary">Update</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-
+            {% else %}
+            <div class="card">
+                <div class="card-block">
+                    <h4 class="card-title text-primary">{{ currentUser.name }}</h4>
+                    <p class="mb-0">{{ currentUser.created_at }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-8 pull-md-4">
+            {% if pins.length > 0 %}
+			<div class="card-columns">
+				{% for pin in pins %}
+					{% include 'pins/pin.html'%}
+				{% endfor %}
+			</div>
+			{% else %}
+			<div class="row">
+				<div class="col-md-4 offset-md-4">
+					<div class="card text-center">
+						<div class="card-block">
+							<h4 class="card-title">No Pins Found</h4>
+							<p>Let's post the first pin and get some pinteresting content!</p>
+							{% if user %}
+							<button type="button" class="btn btn-block btn-primary mt-1" data-toggle="modal" data-target="#newPinModal">Pin-It</button>
+							{% else %}
+							<a href="/users/register" class="btn btn-primary">Sign Up</a>
+							<a href="/users/login" class="btn btn-outline-primary">Login</a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endif %}
         </div>
     </div>
 </div>
@@ -70,68 +106,71 @@
 
 {% block extra_js %}
 <script type="text/javascript">
-$('#informationForm').on('submit', function(e){
-    e.preventDefault();
-    var userData = {};
-    userData.name = $('input[name="name"]').val();
-    userData.email = $('input[name="email"]').val();
-    userData.city = $('input[name="city"]').val();
-    userData.state = $('input[name="state"]').val();
+$(document).ready(function(){
+    $('#informationForm').on('submit', function(e){
+        e.preventDefault();
+        var userData = {};
+        userData.name = $('input[name="name"]').val();
+        userData.email = $('input[name="email"]').val();
+        userData.city = $('input[name="city"]').val();
+        userData.state = $('input[name="state"]').val();
 
-    $.ajax({
-        method: 'POST',
-        url: '/users/update',
-        data: userData,
-        success: function() {
-            $.notify({
-                title: '<h5>Success</h5>',
-                message: 'Your profile was updated!'
-            },{
-                type: 'success',
-                delay: 5000
-            });
-        },
-        error: function(error) {
-            $.notify({
-                title: '<h5>Uh Oh...</h5>',
-                message: error.responseJSON.message
-            },{
-                type: 'danger',
-                delay: 5000
-            });
-        }
-    })
+        $.ajax({
+            method: 'POST',
+            url: '/users/update',
+            data: userData,
+            success: function() {
+                $.notify({
+                    title: '<h5>Success</h5>',
+                    message: 'Your profile was updated!'
+                },{
+                    type: 'success',
+                    delay: 5000
+                });
+            },
+            error: function(error) {
+                $.notify({
+                    title: '<h5>Uh Oh...</h5>',
+                    message: error.responseJSON.message
+                },{
+                    type: 'danger',
+                    delay: 5000
+                });
+            }
+        })
+    });
+
+    $('#passwordForm').on('submit', function(e){
+        e.preventDefault();
+        var passwordData = {};
+        passwordData.password = $('input[name="password"]').val();
+        passwordData.password2 = $('input[name="password2"]').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/users/update',
+            data: passwordData,
+            success: function() {
+                $.notify({
+                    title: '<h5>Success</h5>',
+                    message: 'Your password was updated!'
+                },{
+                    type: 'success',
+                    delay: 5000
+                });
+            },
+            error: function(error) {
+                $.notify({
+                    title: '<h5>Uh Oh...</h5>',
+                    message: error.responseJSON.message
+                },{
+                    type: 'danger',
+                    delay: 5000
+                });
+            }
+        });
+    });
 });
 
-$('#passwordForm').on('submit', function(e){
-    e.preventDefault();
-    var passwordData = {};
-    passwordData.password = $('input[name="password"]').val();
-    passwordData.password2 = $('input[name="password2"]').val();
-
-    $.ajax({
-        method: 'POST',
-        url: '/users/update',
-        data: passwordData,
-        success: function() {
-            $.notify({
-                title: '<h5>Success</h5>',
-                message: 'Your password was updated!'
-            },{
-                type: 'success',
-                delay: 5000
-            });
-        },
-        error: function(error) {
-            $.notify({
-                title: '<h5>Uh Oh...</h5>',
-                message: error.responseJSON.message
-            },{
-                type: 'danger',
-                delay: 5000
-            });
-        }
-    })
-});
 </script>
 {% endblock %}
