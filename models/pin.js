@@ -50,7 +50,7 @@ PinModel.prototype.getPinsForUser = function(options, callback) {
         console.log('getPinsForUser');
         return callback("invalidId", false);
     }
-    Pin.find({ user: id }, callback);
+    Pin.find({ user: id }).populate('user').exec(callback);
 }
 
 PinModel.prototype.removePinById = function(options, callback) {
