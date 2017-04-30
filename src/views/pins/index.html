@@ -42,6 +42,7 @@
 {% block extra_js %}
 <script type="text/javascript">
 $(document).ready(function(){
+	/* Delete a Pin */
 	$('button[name="deleteButton"]').on('click', function(e){
 		e.preventDefault();
 		var pinTitle = $(this).data('title');
@@ -97,7 +98,7 @@ $(document).ready(function(){
 	            });
 
 				window.setTimeout(function(){
-					location.reload();
+					location.reload(true);
 				}, 3000);
 
 	        },

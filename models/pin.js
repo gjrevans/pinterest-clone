@@ -60,8 +60,7 @@ PinModel.prototype.removePinById = function(options, callback) {
         console.log('removePinById');
         return callback("invalidId", false);
     }
-
-    Pin.findOneAndRemove(id, callback);
+    Pin.findOneAndRemove({ _id: id }, callback);
 }
 
 module.exports = PinModel;
