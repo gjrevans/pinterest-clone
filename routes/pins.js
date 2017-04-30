@@ -7,7 +7,6 @@ var PinRoutes = function(appModels){
 PinRoutes.prototype.index = function(req, res) {
     models.pin.getAllPins(options = {}, function(err, pins){
         if(err) throw err;
-        console.log(pins);
         res.render('pins/index.html', {
             breadcrumbs: req.breadcrumbs(),
             page: { title: 'All Pins' },
