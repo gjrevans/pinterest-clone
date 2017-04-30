@@ -1,5 +1,5 @@
 <div class="card card-inverse">
-    <img class="card-img-top img-fluid" src="{{ pin.image }}" alt="{{ pin.title }}">
+    <img class="card-img-top img-fluid" src="{{ pin.image }}" alt="{{ pin.title }}" onerror="imgError(this);">
     <div class="card-img-overlay">
         {% if pin.user.id == user._id and user %}
         <button type="button"
